@@ -6,7 +6,6 @@ import os
 
 import pandas as pd
 import numpy as np
-import scanpy as sc
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -97,7 +96,7 @@ plt.savefig(os.path.join(figure_folder,"gRNA_stat.pdf"))
 pval_edit_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                         config["output_file_name_list"]["edist_pvalue_table"]),
                            index_col=0)
-
+fig,ax = plt.subplots(1,1,figsize=(8,6))
 sns.scatterplot(data=pval_edit_df,x="distance_mean_log",y="pval_mean_log")
 sns.kdeplot(data=pval_edit_df,x="distance_mean_log",y="pval_mean_log",color="black",alpha=0.4)
 plt.savefig(os.path.join(figure_folder,"e-dist_distribution.pdf"))
