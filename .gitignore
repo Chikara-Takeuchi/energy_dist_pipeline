@@ -10,3 +10,6 @@ Thumbs.db
 
 .ipynb_checkpoints
 pipeline_output/*.pickle
+
+#Exclude for now(too big)
+*.sif

@@ -1,3 +1,4 @@
+python==3.12
 pandas==2.2.1
 numpy==1.26.4
 seaborn==0.13.2
