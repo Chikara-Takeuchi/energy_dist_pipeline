@@ -55,9 +55,6 @@ clear_nt_sgRNA_list = nontargeting_outlier_df[nontargeting_outlier_df["pval_outl
 
 annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                          config["output_file_name_list"]["annotation_file"]),index_col=0)
-annotation_df.head()
-
-
 
 
 #gRNA_region_dict: key: each region, value: gRNA names for each key
@@ -88,7 +85,8 @@ pval_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDE
 
 ### Calculate energy distances between perturbations
 pval_df_sig = pval_df[(pval_df["pval_mean"]<config_clustering["cutoff"]["pval_cutoff"]) &
-                      (pval_df["distance_mean"]>config_clustering["cutoff"]["distance_cutoff"])]
+                      (pval_df["distance_mean"]>config_clustering["cutoff"]["distance_cutoff"]) &
+                      (pval_df["type"]=="targeting")]
 
 region_list_sig = np.unique(pval_df_sig.index)
 

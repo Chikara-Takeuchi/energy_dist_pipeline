@@ -67,11 +67,11 @@ gRNA_region_dict = {}
 count_region_dict = {}
 
 for index,row in annotation_df.iterrows():
-    if row.protospacer_ID in gRNA_dict.keys():
-        if row.target_transcript_name in gRNA_region_dict.keys():
-            gRNA_region_dict[row.target_transcript_name] += [row.protospacer_ID]
+    if row.guide_id in gRNA_dict.keys():
+        if row.intended_target_name in gRNA_region_dict.keys():
+            gRNA_region_dict[row.intended_target_name] += [row.guide_id]
         else:
-            gRNA_region_dict[row.target_transcript_name] = [row.protospacer_ID]
+            gRNA_region_dict[row.intended_target_name] = [row.guide_id]
 
 for key in gRNA_region_dict.keys():
     gRNA_region_dict[key] = np.unique(gRNA_region_dict[key])

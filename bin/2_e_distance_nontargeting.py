@@ -129,8 +129,8 @@ output_file = os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
 ## Energy distance calculation
 
 ### Helper functions
-def get_source_target(target_name,annotation_df,annotation_col="target_transcript_name"):
-    return annotation_df.loc[(annotation_df[annotation_col]==target_name),"source"].values[0]
+def get_type_target(target_name,annotation_df,annotation_col="intended_target_name"):
+    return annotation_df.loc[(annotation_df[annotation_col]==target_name),"type"].values[0]
 
 def adjust_processing_parameters(target_cell_names, default_batch_num):
     """
@@ -341,7 +341,7 @@ for target_index, target_name in pbar:
             if target_name not in pval_dict:
                 pval_dict[target_name] = {}
                 pval_dict[target_name]["cell_count"] = len(target_cell_names)
-                pval_dict[target_name]["source"] = get_source_target(target_name,annotation_df)
+                pval_dict[target_name]["type"] = get_type_target(target_name,annotation_df)
 
             # Store observed distance and calculate p-value
             pval_dict[target_name][f"distance_{bg_index}"] = obs_edist.item() # Use .item() for scalar tensor

@@ -12,8 +12,7 @@ def get_gRNA_region_dict(annotation_df,gRNA_dict):
     Creates a dictionary mapping target transcript names to a unique list of associated gRNA protospacer IDs.
 
     Args:
-        annotation_df (pandas.DataFrame): DataFrame containing annotation information,
-                                           including 'source', 'protospacer_ID', and 'target_transcript_name' columns.
+        annotation_df (pandas.DataFrame): DataFrame containing annotation information
         gRNA_dict (dict): A dictionary where keys are gRNA protospacer IDs. The values are not used in this function.
 
     Returns:
@@ -24,12 +23,12 @@ def get_gRNA_region_dict(annotation_df,gRNA_dict):
     gRNA_region_dict_tmp = {}
     
     for index,row in annotation_df.iterrows():
-        if row.source != "non-targeting":
-            if row.protospacer_ID in gRNA_dict.keys():
-                if row.target_transcript_name in gRNA_region_dict_tmp.keys():
-                    gRNA_region_dict_tmp[row.target_transcript_name] += [row.protospacer_ID]
+        if row.type != "non-targeting":
+            if row.guide_id in gRNA_dict.keys():
+                if row.intended_target_name in gRNA_region_dict_tmp.keys():
+                    gRNA_region_dict_tmp[row.intended_target_name] += [row.guide_id]
                 else:
-                    gRNA_region_dict_tmp[row.target_transcript_name] = [row.protospacer_ID]
+                    gRNA_region_dict_tmp[row.intended_target_name] = [row.guide_id]
     for key in gRNA_region_dict_tmp.keys():
         gRNA_region_dict_tmp[key] = np.unique(gRNA_region_dict_tmp[key])
     

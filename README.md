@@ -7,10 +7,15 @@ The TF Perturb-Seq energy distance pipeline is designed to perform the following
 2.  Identify significant perturbations (hits) from Perturb-Seq screens using energy distance and permutation tests.
 3.  Identify perturbations with similar effects to characterize distinct perturbation phenotypes.
 
-Required inputs are:
+Inputs are:
 
 * An `.h5ad` file containing processed single-cell data, including a PCA embedding (typically found in `.obsm['X_pca']`).
 * A cell-by-gRNA count matrix (saved in Python pickle format).
+* (Optional) gRNA information table(csv format) column should include `guide_id`,`intended_target_name`,`type`,`spacer` defined in the [IGVF DACC](https://github.com/IGVF-DACC/checkfiles/blob/dev/src/schemas/table_schemas/guide_rna_sequences.json)
+
+gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` specified in the config file.
+
+
 
 ## Run TF Perturb-Seq Energy Distance Pipeline
 
@@ -18,24 +23,29 @@ Required inputs are:
 
 ### With Container (Recommended)
 
-1.  Modify the `run_step0_1_2_base.sh` file as follows:
+1.  Modify the `run_step0_base.sh` and `run_step1_2_base.sh` file as follows:
     ```bash
     CONFIG_PATH=[PATH TO YOUR config.json]
     BIN_PATH=[PATH TO THE bin FOLDER OF THIS PIPELINE]
     ```
-2.  Modify the `run_container_step0_1_2.sh` file as follows:
+2.  Modify the `run_container_step0.sh` and `run_container_step1_2.sh` file as follows:
     ```bash
     CONTAINER_PATH=[PATH TO THE .sif FILE FOR THE ENERGY DISTANCE CONTAINER]
     ```
-3.  Then, run the pipeline using:
+3.  (Optional) Format gRNA information. if you already have gRNA information table with IGVF DACC format, skip this step.
     ```bash
-    sbatch run_container_step0_1_2.sh
+    sbatch run_container_step0.sh
+    ```
+
+4. Then, run the pipeline using:
+    ```bash
+    sbatch run_container_step1_2.sh
     ```
 
 ### Without Container
 
 1.  Create a Python environment that satisfies the dependencies listed in `requirements.txt`.
-2.  Modify the `run_step0_1_2.sh` file as follows:
+2.  Modify the `run_step0.sh` and `run_step1_2.sh` file as follows:
     ```bash
     CONFIG_PATH=[PATH TO YOUR config.json]
     BIN_PATH=[PATH TO THE bin FOLDER OF THIS PIPELINE]

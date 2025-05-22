@@ -1,0 +1,10 @@
+[Step3] Calculate association between perturbations
+--- Processing PCA data ---
+Loading existing PCA file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle'.
+
+--- Processing gRNA dictionary ---
+Loading existing gRNA dictionary file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle'.
+gRNA dictionary loaded successfully. Found 11634 types of gRNAs.
+
+--- Processing finished ---
+All steps completed successfully.

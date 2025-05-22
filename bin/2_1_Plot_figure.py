@@ -55,12 +55,12 @@ annotation_df.head()
 ### plot number of (1) gRNAs removed in the outlier analysis and (2) gRNAs remained
 
 
-target_transcript_name_list = np.unique(annotation_df[annotation_df["source"]!="non-targeting"]["target_transcript_name"])
+target_transcript_name_list = np.unique(annotation_df[annotation_df["type"]!="non-targeting"]["intended_target_name"])
 sgRNA_outlier_dict = sgRNA_outlier_df.to_dict()["pval_outlier"]
 gRNA_stat_dict = {}
 
 for target_name in tqdm(target_transcript_name_list):
-    gRNA_names_all = annotation_df[annotation_df["target_transcript_name"]==target_name]["protospacer_ID"].values
+    gRNA_names_all = annotation_df[annotation_df["intended_target_name"]==target_name]["guide_id"].values
     gRNA_stat_dict[target_name] = {}
 
     gRNA_dropped = 0
@@ -123,7 +123,7 @@ cutoff_df_neg = pd.DataFrame(index=pval_list,columns=dist_val_list)
 for pval_cutoff in pval_list:
     for dist_cutoff in dist_val_list:
         selected_df = pval_edit_df[
-                        (pval_edit_df["source"]=="neg_control") &
+                        (pval_edit_df["type"]=="negative control") &
                         (pval_edit_df["distance_mean"]>dist_cutoff) &
                         (pval_edit_df["pval_mean"]<pval_cutoff)]
         cutoff_df_neg.loc[pval_cutoff,dist_cutoff] = selected_df.shape[0]

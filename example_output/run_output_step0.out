@@ -1,0 +1,5 @@
+[Step0] preprocessing annotation files
+Folder already exist /project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output
+(array(['negative control', 'non-targeting', 'positive control',
+       'targeting'], dtype=object), array([  598,   600,    18, 13142]))
+All steps completed successfully.
