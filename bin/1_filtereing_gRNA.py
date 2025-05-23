@@ -49,8 +49,7 @@ with open(json_fp, 'r') as fp:
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
-                                         config["output_file_name_list"]["annotation_file"]),index_col=0)
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
 
 
 (pca_df,gRNA_dict) = util_functions.load_files(config["input_data"]["h5ad_file"],
@@ -59,7 +58,7 @@ annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT
                                                             config["output_file_name_list"]["pca_table"]),
                                                os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                                             config["output_file_name_list"]["gRNA_dict"]),
-                                               overwrite=False
+                                               overwrite=config["output_file_name_list"]["OVERWRITE_PCA_DICT"]
                                               )
 
 

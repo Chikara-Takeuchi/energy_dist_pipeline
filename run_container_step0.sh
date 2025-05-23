@@ -9,7 +9,7 @@
 
 
 #Note: Use singularity 4.1.0 for this code. for UTSW environment, run "module load singularity/4.1.0" to activate singularity. 
-
+# module load singularity/4.1.0
 #Define the path to the config file and bin directory
 CONTAINER_PATH="/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/container/edist_pipeline_v01.sif"
 

@@ -47,8 +47,7 @@ nontargeting_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list
                                             index_col=0)
 
 
-annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
-                                         config["output_file_name_list"]["annotation_file"]),index_col=0)
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
 annotation_df.head()
 
 

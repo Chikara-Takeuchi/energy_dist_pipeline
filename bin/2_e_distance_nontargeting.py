@@ -67,8 +67,7 @@ clear_sgRNA_list = sgRNA_outlier_df[sgRNA_outlier_df["pval_outlier"]>0.05].index
 clear_nt_sgRNA_list = nontargeting_outlier_df[nontargeting_outlier_df["pval_outlier"]>0.05].index.tolist()
 
 
-annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
-                                         config["output_file_name_list"]["annotation_file"]),index_col=0)
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
 
 gRNA_region_dict = util_functions.get_gRNA_region_dict(annotation_df,gRNA_dict)
 

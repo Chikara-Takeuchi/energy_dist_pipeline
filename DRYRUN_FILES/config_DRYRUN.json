@@ -17,16 +17,16 @@
     },
     "gRNA_filtering":{
         "combi_count": 4,
-        "total_permute_disco": 1000,
-        "batch_num_basic": 120
+        "total_permute_disco": 100,
+        "batch_num_basic": 20
     },
     "permutation_test":{
-        "permute_per_bg": 1000,
-        "num_of_bg": 20,
-        "non_target_pick": 2000,
-        "batch_num_basic": 200
+        "permute_per_bg": 100,
+        "num_of_bg": 5,
+        "non_target_pick": 500,
+        "batch_num_basic": 50
     },
     "aggregate":{
-        "downsampling_maximum":10000
+        "downsampling_maximum":2000
     }
 }

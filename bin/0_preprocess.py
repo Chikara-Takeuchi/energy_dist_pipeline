@@ -9,6 +9,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+import sys
 import json
 
 import util_functions
@@ -28,6 +29,11 @@ with open(json_fp, 'r') as fp:
     config = json.load(fp)
 
 output_folder = config["output_file_name_list"]["OUTPUT_FOLDER"]
+
+#Check if the annotation file exist.
+if os.path.exists(config["input_data"]["annotation_file"]):
+    print(f"{config["input_data"]["annotation_file"]} already exist. Please remove file before run this script")
+    sys.exit()
 
 if os.path.exists(output_folder)==False:
     print("generate folder for figure:",output_folder)
@@ -69,8 +75,7 @@ gRNA_ref_df_output = gRNA_ref_df.loc[:,["protospacer_ID","target_transcript_name
 
 gRNA_ref_df_output.columns = ["guide_id","intended_target_name","type","spacer"]
 
-gRNA_ref_df_output.to_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
-                                       config["output_file_name_list"]["annotation_file"]))
+gRNA_ref_df_output.to_csv(config["input_data"]["annotation_file"])
 
 
 
