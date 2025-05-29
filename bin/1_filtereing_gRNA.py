@@ -49,7 +49,10 @@ with open(json_fp, 'r') as fp:
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
+
+
+
+annotation_df= pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
 
 
 (pca_df,gRNA_dict) = util_functions.load_files(config["input_data"]["h5ad_file"],
@@ -144,11 +147,10 @@ def generate_sgrna_group_combinations(gRNA_list_target, combi_count):
             seen_combinations.add(frozen_pair)
             # Add back in the original list format
             unique_combis.append((group1, group2))
-
-    # Note: The original code called util_functions.get_unique_list AFTER this.
-    # If get_unique_list does something more complex than the uniqueness logic here,
-    # you might need to adjust or call it after this function.
-    # Assuming the logic above correctly finds unique pairs.
+    
+    if len(unique_combis)>3000:
+        print(f"[warning] number of combis are {len(unique_combis)}. Please confirm annotation file")
+        print(f"[warning] Hint: Common reason of this is because non-targeting gRNAs are labeled with targeting gRNAs")
     return unique_combis
 
 
@@ -265,9 +267,6 @@ def format_results_dataframe(res, total_combis, gRNA_list_target):
     return result_df
 
 
-# In[12]:
-
-
 # --- Main Processing Loop ---
 
 # gRNA_region_dict: Dict mapping region name to list/array of sgRNAs
@@ -280,8 +279,11 @@ combi_count = 6
 
 result_df_dict = {} # Initialize result dictionary
 
+non_targeting_regions = \
+    np.unique(annotation_df[annotation_df["type"]=="non-targeting"]["intended_target_name"].values)
+
 test_region_np = np.array(list(gRNA_region_dict.keys()))
-test_region_np = test_region_np[~(test_region_np=="non-targeting")]
+test_region_np = test_region_np[~np.isin(test_region_np,non_targeting_regions)]
 
 print(f"Processing {len(test_region_np)} target regions...")
 
@@ -311,6 +313,10 @@ for target in pbar_targets:
     res = []
     # Use a nested tqdm for combinations within a target, leaving the outer one clean
     #pbar_combis = tqdm(enumerate(total_combis), total=len(total_combis), desc=f"Target '{target}' Combinations", leave=False)
+    pbar_targets.set_postfix({
+            "Current Target": target,
+            "total_combis": len(total_combis),
+        })
     for index_combi, (combi_test1, combi_test2) in enumerate(total_combis):
         # Get cells for the current combination
         cell_test1, cell_test2 = get_cells_for_sgrna_groups(combi_test1, combi_test2, gRNA_dict)
@@ -321,12 +327,10 @@ for target in pbar_targets:
         res.append(distance)
 
     # 3. Format results into a DataFrame
-    # print(f"\nFormatting results for target: {target}") # Optional verbose print
     result_df = format_results_dataframe(res, total_combis, gRNA_list_target)
 
     # Store the result DataFrame
     result_df_dict[target] = result_df
-    # print(f"Finished processing target: {target}") # Optional verbose print
 
 print("\nAll target regions processed.")
 # Now result_df_dict contains the DataFrames for each target region.
@@ -575,12 +579,11 @@ except Exception as e:
 
 
 ### Filtering non-targeting gRNAs
-
-
-non_target_gRNA_list = [item for item in list(gRNA_dict.keys())
-                        if (item.startswith("non-targeting")) and
-                        (len(gRNA_dict[item])>20)]
+non_target_gRNA_list = np.concatenate([gRNA_region_dict[region] for region in non_targeting_regions])
 cell_id_nontarget_list = [gRNA_dict[key] for key in non_target_gRNA_list]
+
+print("Num of non-targeting regions:",len(non_targeting_regions))
+print("Num of non-targeting gRNAs:",len(non_target_gRNA_list))
 
 res = energy_distance_calc.pairwise_torch(pca_df,cell_id_nontarget_list,device,vardose=True)
 

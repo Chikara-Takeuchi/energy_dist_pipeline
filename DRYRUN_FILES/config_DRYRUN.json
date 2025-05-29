@@ -18,11 +18,11 @@
     "gRNA_filtering":{
         "combi_count": 4,
         "total_permute_disco": 100,
-        "batch_num_basic": 20
+        "batch_num_basic": 50
     },
     "permutation_test":{
         "permute_per_bg": 100,
-        "num_of_bg": 5,
+        "num_of_bg": 2,
         "non_target_pick": 500,
         "batch_num_basic": 50
     },
