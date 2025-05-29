@@ -70,7 +70,7 @@ count_region_dict = {}
 
 for index,row in annotation_df.iterrows():
     if row.guide_id in gRNA_dict.keys():
-        if row.intended_target_name in gRNA_region_dict.keys():
+        if row.guide_id in gRNA_region_dict.keys():
             gRNA_region_dict[row.intended_target_name] += [row.guide_id]
         else:
             gRNA_region_dict[row.intended_target_name] = [row.guide_id]
