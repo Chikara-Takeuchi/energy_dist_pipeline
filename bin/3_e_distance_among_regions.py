@@ -32,15 +32,15 @@ with open(json_fp_cluster, 'r') as fp:
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-(pca_df,gRNA_dict) = util_functions.load_files(config["input_data"]["h5ad_file"],
-                                               config["input_data"]["sgRNA_file"],
+(pca_df,gRNA_dict) = util_functions.load_files(config["input_data"]["h5ad_file"]["file_path"],
+                                               config["input_data"]["sgRNA_file"]["file_path"],
                                                os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                                             config["output_file_name_list"]["pca_table"]),
                                                os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                                             config["output_file_name_list"]["gRNA_dict"]),
-                                               overwrite=False
+                                               obsm_key=config["input_data"]["h5ad_file"]["obsm_key"],
+                                               overwrite=config["output_file_name_list"]["OVERWRITE_PCA_DICT"]
                                               )
-
 sgRNA_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                                   config["output_file_name_list"]["targeting_outlier_table"]),
                                      index_col=0)
@@ -52,13 +52,11 @@ nontargeting_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list
 clear_sgRNA_list = sgRNA_outlier_df[sgRNA_outlier_df["pval_outlier"]>0.05].index.tolist()
 clear_nt_sgRNA_list = nontargeting_outlier_df[nontargeting_outlier_df["pval_outlier"]>0.05].index.tolist()
 
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"]["file_path"],index_col=None)
 
-annotation_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
-                                         config["output_file_name_list"]["annotation_file"]),index_col=0)
-
-
-#gRNA_region_dict: key: each region, value: gRNA names for each key
-gRNA_region_dict = util_functions.get_gRNA_region_dict(annotation_df,gRNA_dict)
+gRNA_region_dict = util_functions.get_gRNA_region_dict(annotation_df,
+                                                       gRNA_dict,
+                                                       config["input_data"]["annotation_file"]["concatenate_key"])
 
 
 #gRNA_region_clear_dict: basically gRNA_region_dict but outlier gRNAs are excluded

@@ -11,11 +11,22 @@
         "OVERWRITE_PCA_DICT": true
     },
     "input_data":{
-        "annotation_file": "/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/ref/annotation_file_table.csv",
-        "h5ad_file": "/project/shared/gcrb_igvf/data/shared/TF_Perturbseq_full/H5AD/V0.1_TF_Perturbseq_full_sgRNACells_filtered_w_embedding_full_dataset.h5ad",
-        "sgRNA_file": "/project/GCRB/Hon_lab/s215194/Single_Cell/TF_perturbseq_full/_all_lanes_combined/aggr_dataframe/aggr_combined_df_full.pkl"
+        "annotation_file": {
+            "file_path":"/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/ref/annotation_file_table.csv",
+            "concatenate_key": "intended_target_name"
+        },
+        "h5ad_file": {
+            "file_path":"/project/shared/gcrb_igvf/data/shared/TF_Perturbseq_full/H5AD/V0.1_TF_Perturbseq_full_sgRNACells_filtered_w_embedding_full_dataset.h5ad",
+            "obsm_key": "X_pca"
+        },
+        "sgRNA_file": {
+            "file_path":"/project/GCRB/Hon_lab/s215194/Single_Cell/TF_perturbseq_full/_all_lanes_combined/aggr_dataframe/aggr_combined_df_full.pkl"
+        }
     },
     "gRNA_filtering":{
+        "perform_targeting_filtering": true,
+        "perform_nontargeting_filtering": true,
+        "threshold_gRNA_num": 6,
         "combi_count": 4,
         "total_permute_disco": 1000,
         "batch_num_basic": 120

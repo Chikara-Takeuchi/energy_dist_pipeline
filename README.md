@@ -23,21 +23,19 @@ gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` speci
 
 ### With Container (Recommended)
 
-1.  Modify the `run_step0_base.sh` and `run_step1_2_base.sh` file as follows:
+1.  Modify the `run_container_step0.sh` and `run_container_step1_2.sh` file as follows:
     ```bash
+    CONTAINER_PATH=[PATH TO THE .sif FILE FOR THE ENERGY DISTANCE CONTAINER]
     CONFIG_PATH=[PATH TO YOUR config.json]
     BIN_PATH=[PATH TO THE bin FOLDER OF THIS PIPELINE]
     ```
-2.  Modify the `run_container_step0.sh` and `run_container_step1_2.sh` file as follows:
-    ```bash
-    CONTAINER_PATH=[PATH TO THE .sif FILE FOR THE ENERGY DISTANCE CONTAINER]
-    ```
-3.  (Optional) Format gRNA information. if you already have gRNA information table with IGVF DACC format, skip this step.
+
+2.  (Optional) Format gRNA information. if you already have gRNA information table with IGVF DACC format, skip this step.
     ```bash
     sbatch run_container_step0.sh
     ```
 
-4. Then, run the pipeline using:
+3. Then, run the pipeline using:
     ```bash
     sbatch run_container_step1_2.sh
     ```
@@ -55,7 +53,9 @@ gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` speci
     ```
 3.  Run the pipeline using:
     ```bash
-    sbatch run_step0_1_2.sh
+    sbatch run_step0.sh
+    sbatch run_step1_2.sh
+    sbatch run_step3.sh
     ```
 
 ## Descriptions of each script
@@ -142,16 +142,33 @@ This section defines the paths and filenames for various output and intermediate
 #### `input_data`
 This section defines the paths to the primary input data files.
 
-* **`annotation_file`**: (String) Path to the processed gRNA annotation csv table. Column name should include `guide_id`,`intended_target_name`,`type`,`spacer`. additional columns are acceptable.
+* **`annotation_file`**: 
+    configs related to annotation file.
+    * **`file_path`**
+    (String) Path to the processed gRNA annotation csv table. Column name should include `guide_id`,`intended_target_name`,`type`,`spacer`. additional columns are acceptable.
+    * **`concatenate_key`**
+    (String) the columns name of the annotation file to concatenate gRNAs. It is usually the region name (such as "intended_target_name").
 
-* **`h5ad_file`**: (String) Path to the input AnnData file (`.h5ad`). This file should contain the gene expression data (though not directly used by these scripts) and, importantly, the precomputed PCA results stored in `.obsm['X_pca']`. Used by `util_functions.load_files` (called in scripts 1, 2, 3).
+* **`h5ad_file`**: 
+    configs related to input h5ad file.
+    * **`file_path`**
+    (String) Path to the input AnnData file (`.h5ad`). This file should contain the gene expression data (though not directly used by these scripts) and, importantly, the precomputed PCA results stored in `.obsm['X_pca']`. Used by `util_functions.load_files` (called in scripts 1, 2, 3).
+     * **`obsm_key`**
+     (String) key in `obsm` of h5ad file for the e-dist calculation.
 
-* **`sgRNA_file`**: (String) Path to the sgRNA count matrix stored in pickle format (`.pkl`). This file should contain a DataFrame where rows are cells and columns are gRNAs (or vice-versa, the script transposes it if necessary). Used by `util_functions.load_files` (called in scripts 1, 2, 3).
+* **`sgRNA_file`**: 
+    * **`file_path`**
+    (String) Path to the sgRNA count matrix stored in pickle format (`.pkl`). This file should contain a DataFrame where rows are cells and columns are gRNAs (or vice-versa, the script transposes it if necessary). Used by `util_functions.load_files` (called in scripts 1, 2, 3).
 
 #### `gRNA_filtering`
 
 Parameters controlling the gRNA filtering process in `1_filtereing_gRNA.py`.
-
+* **`perform_targeting_filtering`**
+(bool) Whether this pipeline filter targeting gRNAs or not.
+* **`perform_nontargeting_filtering`**
+(bool) Whether this pipeline filter non-targeting gRNAs or not.
+* **`threshold_gRNA_num`**
+(Integer) If the number of gRNAs per region is less than this threshold, all of the combinations are used to find outlier gRNAs. if the number of gRNAs is more than this threshold, combinations within `combi_count` gRNAs are used.
 * **`combi_count`**: (Integer) Used when calculating pairwise energy distances *within* a target region's gRNAs. If a target region has more than 6 associated gRNAs, this parameter defines the size of the subsets of gRNAs to compare (e.g., compare a subset of size `k` vs. another subset of size `combi_count - k`). If the region has 6 or fewer gRNAs, all possible pairs of disjoint non-empty subsets are compared. 
 
 * **`total_permute_disco`**: (Integer) The number of permutations to perform for the DISCO (Distance Components) test. The DISCO test assesses if the distributions of cells associated with different gRNAs for the *same* target region are significantly different from each other.

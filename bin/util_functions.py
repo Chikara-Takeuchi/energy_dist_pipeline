@@ -7,7 +7,8 @@ import scanpy as sc
 from tqdm import tqdm
 from collections import defaultdict # Import defaultdict
 
-def get_gRNA_region_dict(annotation_df,gRNA_dict):
+def get_gRNA_region_dict(annotation_df,gRNA_dict,
+                         concatenate_key="intended_target_name",non_target_key="non-targeting"):
     """
     Creates a dictionary mapping target transcript names to a unique list of associated gRNA protospacer IDs.
 
@@ -21,14 +22,16 @@ def get_gRNA_region_dict(annotation_df,gRNA_dict):
     """
     
     gRNA_region_dict_tmp = {}
-    
+    gRNA_region_dict_tmp[non_target_key] = []
     for index,row in annotation_df.iterrows():
-        if row.type != "non-targeting":
-            if row.guide_id in gRNA_dict.keys():
-                if row.intended_target_name in gRNA_region_dict_tmp.keys():
-                    gRNA_region_dict_tmp[row.intended_target_name] += [row.guide_id]
+        if row["guide_id"] in gRNA_dict.keys():
+            if row["type"] == "non-targeting":
+                gRNA_region_dict_tmp[non_target_key] += [row["guide_id"]]
+            else:
+                if row[concatenate_key] in gRNA_region_dict_tmp.keys():
+                    gRNA_region_dict_tmp[row[concatenate_key]] += [row["guide_id"]]
                 else:
-                    gRNA_region_dict_tmp[row.intended_target_name] = [row.guide_id]
+                    gRNA_region_dict_tmp[row[concatenate_key]] = [row["guide_id"]]
     for key in gRNA_region_dict_tmp.keys():
         gRNA_region_dict_tmp[key] = np.unique(gRNA_region_dict_tmp[key])
     
@@ -107,8 +110,12 @@ def load_files(input_file, sgRNA_file, pca_file, dict_file, obsm_key="X_pca", ov
             sgRNA_data = pd.read_pickle(sgRNA_file)
         except FileNotFoundError:
             print(f"Error: sgRNA file '{sgRNA_file}' not found.")
-            # Return X as it might have been loaded successfully
             return X, None
+        
+        except MemoryError:
+            print(f"MemoryError: Not enough memory to load sgRNA file '{sgRNA_file}'.")
+            return X, None
+        
         except Exception as e:
             print(f"An error occurred while loading sgRNA file '{sgRNA_file}': {e}")
             return X, None
@@ -118,6 +125,10 @@ def load_files(input_file, sgRNA_file, pca_file, dict_file, obsm_key="X_pca", ov
             sgRNA_data = sgRNA_data.T
             # Keep only cells present in the index of X
             sgRNA_data = sgRNA_data[sgRNA_data.index.isin(input_data_index)]
+        except MemoryError:
+            print(f"MemoryError: Not enough memory to load sgRNA file '{sgRNA_file}'.")
+            return X, None
+        
         except Exception as e:
             print(f"An error occurred during sgRNA data transpose or filtering: {e}")
             del sgRNA_data

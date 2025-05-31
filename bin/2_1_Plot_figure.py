@@ -22,7 +22,6 @@ import pickle
 import json
 
 
-
 ### Load congigurations and related files
 json_fp = sys.argv[1]
 with open(json_fp, 'r') as fp:
@@ -47,8 +46,7 @@ nontargeting_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list
                                             index_col=0)
 
 
-annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=0)
-annotation_df.head()
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=None)
 
 
 ### plot number of (1) gRNAs removed in the outlier analysis and (2) gRNAs remained
