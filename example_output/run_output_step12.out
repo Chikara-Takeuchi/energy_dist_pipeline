@@ -1,10 +1,20 @@
 [Step1] Filtering outlier gRNAs
 --- Processing PCA data ---
-Loading existing PCA file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle'.
+Overwrite specified. Loading PCA from AnnData (will overwrite '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle').
+Loading input file '/project/shared/gcrb_igvf/data/shared/TF_Perturbseq_full/H5AD/V0.1_TF_Perturbseq_full_sgRNACells_filtered_w_embedding_full_dataset.h5ad'...
+Extracting PCA data from 'X_pca'...
+Saving PCA data to '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle'...
+Releasing AnnData object from memory.
 
 --- Processing gRNA dictionary ---
-Loading existing gRNA dictionary file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle'.
-gRNA dictionary loaded successfully. Found 11634 types of gRNAs.
+Overwrite specified. Creating dictionary from sgRNA data (will overwrite '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle').
+Loading sgRNA file '/project/GCRB/Hon_lab/s215194/Single_Cell/TF_perturbseq_full/_all_lanes_combined/aggr_dataframe/aggr_combined_df_full.pkl'...
+Transposing sgRNA data and filtering by cells present in input data...
+Extracting non-zero count cell-gRNA pairs...
+Creating gRNA dictionary (improved method)...
+gRNA dictionary creation complete. Found 11634 types of gRNAs.
+Saving gRNA dictionary to '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle'...
+Releasing sgRNA data from memory.
 
 --- Processing finished ---
 Processing 2227 target regions...
@@ -87,17 +97,28 @@ Starting Step 2: Disco Tests and Hypergeometric Outlier Calculation...
 Finished processing all targets.
 Aggregating results and saving to CSV...
 Successfully saved outlier p-values to '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/targeting_outlier_table.csv'
+Num of non-targeting gRNAs: 582
 k-means analysis of non-targeting
-[0 1 2] [462   1  95]
+[0 1 2] [530   1  51]
 largest group:  0
-largest group ratio:  0.828
+largest group ratio:  0.911
 [Step2] calculate energy distance between targets and non-targeting
 --- Processing PCA data ---
-Loading existing PCA file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle'.
+Overwrite specified. Loading PCA from AnnData (will overwrite '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle').
+Loading input file '/project/shared/gcrb_igvf/data/shared/TF_Perturbseq_full/H5AD/V0.1_TF_Perturbseq_full_sgRNACells_filtered_w_embedding_full_dataset.h5ad'...
+Extracting PCA data from 'X_pca'...
+Saving PCA data to '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pca_dataframe.pickle'...
+Releasing AnnData object from memory.
 
 --- Processing gRNA dictionary ---
-Loading existing gRNA dictionary file '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle'.
-gRNA dictionary loaded successfully. Found 11634 types of gRNAs.
+Overwrite specified. Creating dictionary from sgRNA data (will overwrite '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle').
+Loading sgRNA file '/project/GCRB/Hon_lab/s215194/Single_Cell/TF_perturbseq_full/_all_lanes_combined/aggr_dataframe/aggr_combined_df_full.pkl'...
+Transposing sgRNA data and filtering by cells present in input data...
+Extracting non-zero count cell-gRNA pairs...
+Creating gRNA dictionary (improved method)...
+gRNA dictionary creation complete. Found 11634 types of gRNAs.
+Saving gRNA dictionary to '/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/gRNA_dictionary.pickle'...
+Releasing sgRNA data from memory.
 
 --- Processing finished ---
 Total: 2155
@@ -181,7 +202,10 @@ Intermediate results saved.
 Saving intermediate results after processing 200 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CGGBP1:P1. Skipping.
+
+Saving intermediate results after processing 210 regions...
+Intermediate results saved.
+
 
 Saving intermediate results after processing 220 regions...
 Intermediate results saved.
@@ -354,7 +378,6 @@ Intermediate results saved.
 Saving intermediate results after processing 640 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region SMARCC1:P1P2. Skipping.
 
 Saving intermediate results after processing 650 regions...
 Intermediate results saved.
@@ -379,7 +402,10 @@ Intermediate results saved.
 Saving intermediate results after processing 700 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region SMARCC2:P1P2. Skipping.
+
+Saving intermediate results after processing 710 regions...
+Intermediate results saved.
+
 
 Saving intermediate results after processing 720 regions...
 Intermediate results saved.
@@ -440,12 +466,14 @@ Intermediate results saved.
 Saving intermediate results after processing 860 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CD29. Skipping.
+
+Saving intermediate results after processing 870 regions...
+Intermediate results saved.
+
 
 Saving intermediate results after processing 880 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region GTF2H2:ENST00000274400.5,ENST00000330280.7. Skipping.
 
 Saving intermediate results after processing 890 regions...
 Intermediate results saved.
@@ -458,7 +486,6 @@ Intermediate results saved.
 Saving intermediate results after processing 910 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region PSMB1:P1P2. Skipping.
 
 Saving intermediate results after processing 920 regions...
 Intermediate results saved.
@@ -467,7 +494,6 @@ Intermediate results saved.
 Saving intermediate results after processing 930 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region SRCAP:P1P2. Skipping.
 
 Saving intermediate results after processing 940 regions...
 Intermediate results saved.
@@ -480,7 +506,6 @@ Intermediate results saved.
 Saving intermediate results after processing 960 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CBFA2T3:P1. Skipping.
 
 Saving intermediate results after processing 970 regions...
 Intermediate results saved.
@@ -505,7 +530,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1020 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region IGHMBP2:P1P2. Skipping.
 
 Saving intermediate results after processing 1030 regions...
 Intermediate results saved.
@@ -514,7 +538,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1040 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region MSLN:P1P2. Skipping.
 
 Saving intermediate results after processing 1050 regions...
 Intermediate results saved.
@@ -527,7 +550,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1070 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region NGFRAP1. Skipping.
 
 Saving intermediate results after processing 1080 regions...
 Intermediate results saved.
@@ -544,7 +566,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1110 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region PHB2:P1P2. Skipping.
 
 Saving intermediate results after processing 1120 regions...
 Intermediate results saved.
@@ -681,7 +702,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1450 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CXXC1:P1P2. Skipping.
 
 Saving intermediate results after processing 1460 regions...
 Intermediate results saved.
@@ -710,7 +730,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1520 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region TSHZ2:P1P2. Skipping.
 
 Saving intermediate results after processing 1530 regions...
 Intermediate results saved.
@@ -739,13 +758,10 @@ Intermediate results saved.
 Saving intermediate results after processing 1590 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region NCL:P1. Skipping.
-Warning: No cells found for target region GTF2F2:P1P2. Skipping.
 
 Saving intermediate results after processing 1600 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region WDHD1:P1P2. Skipping.
 
 Saving intermediate results after processing 1610 regions...
 Intermediate results saved.
@@ -774,13 +790,14 @@ Intermediate results saved.
 Saving intermediate results after processing 1670 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CRTC3:P1P2. Skipping.
 
 Saving intermediate results after processing 1680 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ZNF20:P1. Skipping.
-Warning: No cells found for target region NCOA3:P1P2. Skipping.
+
+Saving intermediate results after processing 1690 regions...
+Intermediate results saved.
+
 
 Saving intermediate results after processing 1700 regions...
 Intermediate results saved.
@@ -797,7 +814,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1730 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region RELB:P1P2. Skipping.
 
 Saving intermediate results after processing 1740 regions...
 Intermediate results saved.
@@ -810,7 +826,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1760 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region E2F3:P2. Skipping.
 
 Saving intermediate results after processing 1770 regions...
 Intermediate results saved.
@@ -819,20 +834,14 @@ Intermediate results saved.
 Saving intermediate results after processing 1780 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ARID1B:P1. Skipping.
-Warning: No cells found for target region ZFYVE20:P1P2. Skipping.
-Warning: No cells found for target region E4F1:P1P2. Skipping.
-Warning: No cells found for target region MTA1:P1P2. Skipping.
 
 Saving intermediate results after processing 1790 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region MARS:P1P2. Skipping.
 
 Saving intermediate results after processing 1800 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ZNF592:P1P2. Skipping.
 
 Saving intermediate results after processing 1810 regions...
 Intermediate results saved.
@@ -849,7 +858,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1840 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ZNF207:P1. Skipping.
 
 Saving intermediate results after processing 1850 regions...
 Intermediate results saved.
@@ -858,7 +866,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1860 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ADNP:P1P2. Skipping.
 
 Saving intermediate results after processing 1870 regions...
 Intermediate results saved.
@@ -867,7 +874,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1880 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region HIRA:P2. Skipping.
 
 Saving intermediate results after processing 1890 regions...
 Intermediate results saved.
@@ -876,18 +882,14 @@ Intermediate results saved.
 Saving intermediate results after processing 1900 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region GMEB1:P1P2. Skipping.
-Warning: No cells found for target region POU5F1:P1. Skipping.
 
 Saving intermediate results after processing 1910 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region DAXX:P1. Skipping.
 
 Saving intermediate results after processing 1920 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CBFB:P1P2. Skipping.
 
 Saving intermediate results after processing 1930 regions...
 Intermediate results saved.
@@ -896,11 +898,10 @@ Intermediate results saved.
 Saving intermediate results after processing 1940 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region DMAP1:P1P2. Skipping.
-Warning: No cells found for target region PPP1CB:P1P2. Skipping.
-Warning: No cells found for target region TAF13:P1P2. Skipping.
-Warning: No cells found for target region ERG:P2. Skipping.
-Warning: No cells found for target region ZNF709:P1P2. Skipping.
+
+Saving intermediate results after processing 1950 regions...
+Intermediate results saved.
+
 
 Saving intermediate results after processing 1960 regions...
 Intermediate results saved.
@@ -913,7 +914,6 @@ Intermediate results saved.
 Saving intermediate results after processing 1980 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region SON:P1. Skipping.
 
 Saving intermediate results after processing 1990 regions...
 Intermediate results saved.
@@ -938,12 +938,10 @@ Intermediate results saved.
 Saving intermediate results after processing 2040 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region TFRC. Skipping.
 
 Saving intermediate results after processing 2050 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CBFA2T2:P1P2. Skipping.
 
 Saving intermediate results after processing 2060 regions...
 Intermediate results saved.
@@ -952,28 +950,23 @@ Intermediate results saved.
 Saving intermediate results after processing 2070 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region CD55. Skipping.
 
 Saving intermediate results after processing 2080 regions...
 Intermediate results saved.
 
+Target region with initially 5745 cells is downsampled to 5000.
 
 Saving intermediate results after processing 2090 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region WHSC1:P1P2. Skipping.
 
 Saving intermediate results after processing 2100 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region XRCC6:P1P2. Skipping.
 
 Saving intermediate results after processing 2110 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region NFKB1:P1P2. Skipping.
-Warning: No cells found for target region ZNF704:P1P2. Skipping.
-Warning: No cells found for target region ZNF142:P1P2. Skipping.
 
 Saving intermediate results after processing 2120 regions...
 Intermediate results saved.
@@ -982,8 +975,6 @@ Intermediate results saved.
 Saving intermediate results after processing 2130 regions...
 Intermediate results saved.
 
-Warning: No cells found for target region ZNF444:P1P2. Skipping.
-Target region with initially 5745 cells is downsampled to 5000.
 
 Saving intermediate results after processing 2140 regions...
 Intermediate results saved.
@@ -992,44 +983,6 @@ Intermediate results saved.
 Saving intermediate results after processing 2150 regions...
 Intermediate results saved.
 
-
-Saving intermediate results after processing 2160 regions...
-Intermediate results saved.
-
-
-Saving intermediate results after processing 2170 regions...
-Intermediate results saved.
-
-Warning: No cells found for target region PUF60:P1P2. Skipping.
-Warning: No cells found for target region CREM:ENST00000395895.2. Skipping.
-
-Saving intermediate results after processing 2180 regions...
-Intermediate results saved.
-
-Warning: No cells found for target region B2M. Skipping.
-Warning: No cells found for target region EBF4:P1P2. Skipping.
-Warning: No cells found for target region MALAT1. Skipping.
-Warning: No cells found for target region ZNF395:P1P2. Skipping.
-Warning: No cells found for target region DNAJC21:P1P2. Skipping.
-Warning: No cells found for target region GLI2:ENST00000452319.1. Skipping.
-Warning: No cells found for target region KLF16:P1P2. Skipping.
-Warning: No cells found for target region MYRF:P1. Skipping.
-Warning: No cells found for target region HDGF:P1P2. Skipping.
-Warning: No cells found for target region SOX18:P1P2. Skipping.
-Warning: No cells found for target region TERF2:P1P2. Skipping.
-
-Saving intermediate results after processing 2210 regions...
-Intermediate results saved.
-
-Warning: No cells found for target region PURG:P1P2. Skipping.
-Warning: No cells found for target region OR9Q1. Skipping.
-Warning: No cells found for target region CTNNB1:P1P2. Skipping.
-Warning: No cells found for target region PFDN5:P1P2. Skipping.
-Warning: No cells found for target region SACM1L:P1P2. Skipping.
-Warning: No cells found for target region SMARCA5:P1P2. Skipping.
-Warning: No cells found for target region DNMT1:P1P2. Skipping.
-Warning: No cells found for target region CDK1:P1P2. Skipping.
-Warning: No cells found for target region ZNF700:P1P2. Skipping.
 
 Processing complete. Saving final results...
 Final results saved to /project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/pipeline_output/pval_edist_full.csv

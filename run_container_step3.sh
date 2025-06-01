@@ -12,14 +12,14 @@
 module load singularity/4.1.0
 
 #Define the path to the config file and bin directory
+CONTAINER_PATH="/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/container/edist_pipeline_v01.sif"
 CONFIG_PATH="/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/config.json"
 CONFIG_CLUSTER_PATH="/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/config_clustering.json"
 BIN_PATH="/project/GCRB/Hon_lab/s223695/Data_project/Perturb_seq_edist_pipeline/bin"
-
+  
 # Load the conda module
-source activate scanpy_gpu
 echo "[Step3] Calculate association between perturbations"
-singularity exec --nv ${CONTAINER_PATH}　python ${BIN_PATH}/3_e_distance_among_regions.py \
-  ${CONFIG_PATH} ${CONFIG_CLUSTER_PATH}
+singularity exec --nv ${CONTAINER_PATH} python ${BIN_PATH}/3_e_distance_among_regions.py \
+    ${CONFIG_PATH} ${CONFIG_CLUSTER_PATH}
 
 echo "All steps completed successfully."
