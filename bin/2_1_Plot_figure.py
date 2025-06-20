@@ -46,7 +46,7 @@ nontargeting_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list
                                             index_col=0)
 
 
-annotation_df = pd.read_csv(config["input_data"]["annotation_file"],index_col=None)
+annotation_df = pd.read_csv(config["input_data"]["annotation_file"]["file_path"],index_col=None)
 
 
 ### plot number of (1) gRNAs removed in the outlier analysis and (2) gRNAs remained
@@ -100,11 +100,18 @@ plt.savefig(os.path.join(figure_folder,"e-dist_distribution.pdf"))
 
 
 #### Find best cutoff
-
 max_pval_round = int(np.round(np.max(pval_edit_df["pval_mean_log"])))
 
-pval_list = [1/np.power(10,x) for x in list(range(max_pval_round))]
+pval_list = [1/np.power(10,x) for x in list(range(max_pval_round+1))]
 dist_val_list = [0,5,10,50,100]
+
+# Count number of regions in each type
+type_list,type_count = np.unique(pval_edit_df["type"],return_counts=True)
+print("Number of regions in each type:")
+for t,c in zip(type_list,type_count):
+    print (t,":",c) 
+if  "negative control" not in type_list:
+    print("Warning: 'negative control' not found in the type list. Please check your data.")
 
 cutoff_df = pd.DataFrame(index=pval_list,columns=dist_val_list)
 

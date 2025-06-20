@@ -8,28 +8,12 @@ import pandas as pd
 import numpy as np
 import scanpy as sc
 
-from sklearn.cluster import KMeans
-import scipy.stats
-from itertools import combinations
-from sklearn.metrics import pairwise_distances
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-plt.rcParams.update({'axes.labelsize' : 'large',
-                     'pdf.fonttype' : 42
-                    })
-from matplotlib.backends.backend_pdf import PdfPages
-
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 
 import gc
-import warnings
-import time
-import pickle
 import json
 
-from sklearn.metrics import pairwise_distances
 from multiprocessing import Pool
 import torch
 
@@ -52,7 +36,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
                                                os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
                                                             config["output_file_name_list"]["gRNA_dict"]),
                                                obsm_key=config["input_data"]["h5ad_file"]["obsm_key"],
-                                               overwrite=config["output_file_name_list"]["OVERWRITE_PCA_DICT"]
+                                               overwrite=False
                                               )
 
 sgRNA_outlier_df = pd.read_csv(os.path.join(config["output_file_name_list"]["OUTPUT_FOLDER"],
@@ -81,15 +65,20 @@ for key in gRNA_region_dict.keys():
     if len(gRNA_list_tmp)!=0:
         gRNA_region_clear_dict[key] = [x for x in gRNA_region_dict[key] if x in clear_sgRNA_list]
 
-
-
 cell_per_region_dict = {}
 for key in gRNA_region_clear_dict.keys():
     cell_list_tmp = [gRNA_dict[i] for i in gRNA_region_clear_dict[key]]
     cell_list_tmp = np.concatenate(cell_list_tmp)
     cell_per_region_dict[key] = np.unique(cell_list_tmp)
 
-
+gRNA_per_cell_dict = {}
+for key in gRNA_dict.keys():
+    cell_name_tmp = gRNA_dict[key]
+    for cell_name in cell_name_tmp:
+        if cell_name in gRNA_per_cell_dict.keys():
+            gRNA_per_cell_dict[cell_name] += [key]
+        else:
+            gRNA_per_cell_dict[cell_name] = [key]
 
 print("Total:",len(gRNA_region_clear_dict.keys()))
 
@@ -98,6 +87,7 @@ permute_per_bg = config["permutation_test"]["permute_per_bg"]
 num_of_bg = config["permutation_test"]["num_of_bg"]
 non_target_pick = config["permutation_test"]["non_target_pick"]
 batch_num_basic = config["permutation_test"]["batch_num_basic"]
+use_matched_bg = config["permutation_test"]["use_matched_bg"]
 
 d_tmp = np.log10(0.1/(permute_per_bg*num_of_bg))
 d_tmp = np.round(d_tmp)
@@ -287,6 +277,64 @@ def save_results(data_dict, output_filename,pval_d=0.00001):
     except Exception as e:
         print(f"Error saving results to {output_filename}: {e}")
 
+def get_gRNA_population(cell_name_list):
+    all_gRNAs = [gRNA_per_cell_dict[cell_name] for cell_name in cell_name_list]
+    all_gRNAs = np.concatenate(all_gRNAs)
+    gRNA_name,gRNA_counts = np.unique(all_gRNAs,return_counts=True)
+    return gRNA_name,gRNA_counts
+
+def get_matched_background(cell_name_list,target_name,num_of_bg,verbose=False):
+    original_target_cell_names = cell_per_region_dict.get(target_name, []) # Get cells for the region
+    gRNA_name_list,gRNA_count_list = get_gRNA_population(original_target_cell_names)
+    
+    #index 1. >2 cells have this gRNAs and 2. Not include target gRNA
+    overlap_idx = (gRNA_count_list>2) & ~np.isin(gRNA_name_list,gRNA_region_clear_dict[target_name])
+    
+    gRNA_name_list_overlap = gRNA_name_list[overlap_idx]
+    gRNA_count_list_overlap = gRNA_count_list[overlap_idx]
+    
+    background_cell_list = []
+    if len(gRNA_name_list_overlap)<5:
+        if verbose:
+            print(f"target: {target_name}, small num of cells, use non-targeting for background")
+        cell_num_pick = np.max([len(cell_name_list)*num_of_bg,1000*num_of_bg])
+        background_cell_list = np.random.choice(non_target_cell_name,
+                                               cell_num_pick,replace=False)
+    else:   
+        for i,gRNA_name in enumerate(gRNA_name_list_overlap):
+            cell_name_tmp = np.array(gRNA_dict[gRNA_name])
+            cell_name_tmp = cell_name_tmp[~np.isin(cell_name_tmp,gRNA_region_clear_dict[target_name])]
+
+            cell_num_pick = gRNA_count_list_overlap[i]*num_of_bg
+            if len(cell_name_tmp)<cell_num_pick:
+                cell_name_tmp_select = cell_name_tmp
+                if verbose:
+                    print(f"{gRNA_name} have not enough cells, use all")
+            else:
+                cell_name_tmp_select = np.random.choice(cell_name_tmp,cell_num_pick,replace=False)
+            background_cell_list += [cell_name_tmp_select]
+            
+        background_cell_list = np.unique(np.concatenate(background_cell_list))
+        
+        num_nt_pick = np.max([len(cell_name_list)*num_of_bg-len(background_cell_list),1]) #At least 1000 cells are needed for background
+        
+        if num_nt_pick > len(non_target_cell_name):
+            if verbose: print("cell number too large")
+            num_nt_pick = non_target_pick*num_of_bg
+        background_cell_list_nt = np.random.choice(non_target_cell_name,num_nt_pick,replace=False)
+        background_cell_list = np.concatenate([background_cell_list,background_cell_list_nt])
+        
+        
+    background_cell_list = np.unique(background_cell_list)
+    
+    background_cell_name_reduced = []
+    cell_num_per_bg = int(len(background_cell_list)/num_of_bg)
+    
+    for i in range(num_of_bg):
+        background_cell_name_reduced.append(np.random.choice(background_cell_list,cell_num_per_bg))
+    
+    return background_cell_name_reduced
+
 # Initialize results dictionary
 pval_dict = {}
 
@@ -309,10 +357,18 @@ for target_index, target_name in pbar:
     target_cell_names, batch_num = adjust_processing_parameters(
         original_target_cell_names, batch_num_basic
     )
-
+    
+    if use_matched_bg:
+        print("Use matched background")
+        background_cell_list = get_matched_background(original_target_cell_names,target_name,num_of_bg,False)
+    else:
+        print("Use non-targeting background")
+        background_cell_list = non_target_cell_name_reduced
+    
+    
     # Inner loop for background comparisons
     for bg_index in range(num_of_bg):
-        current_bg_non_target_cells = non_target_cell_name_reduced[bg_index]
+        current_bg_non_target_cells = background_cell_list[bg_index]
 
         # Remove overlapping cells between target and current background
         target_cell_name_clear, non_target_cell_name_clear = remove_overlap_cells(

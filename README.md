@@ -32,7 +32,7 @@ gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` speci
 
 2.  (Optional) Format gRNA information. if you already have gRNA information table with IGVF DACC format, skip this step.
     ```bash
-    sbatch run_container_step0.sh
+    sbatch ./notebook/run_container_step0.sh
     ```
 
 3. Then, run the pipeline using:
@@ -43,7 +43,7 @@ gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` speci
 ### Without Container
 
 1.  Create a Python environment that satisfies the dependencies listed in `requirements.txt`.
-2.  Modify the `run_step0.sh` and `run_step1_2.sh` file as follows:
+2.  Modify the `run_step1_2.sh` file as follows:
     ```bash
     CONFIG_PATH=[PATH TO YOUR config.json]
     BIN_PATH=[PATH TO THE bin FOLDER OF THIS PIPELINE]
@@ -53,7 +53,6 @@ gRNA information table should located in `OUTPUT_FOLDER`/`annotation_file` speci
     ```
 3.  Run the pipeline using:
     ```bash
-    sbatch run_step0.sh
     sbatch run_step1_2.sh
     sbatch run_step3.sh
     ```
@@ -164,9 +163,9 @@ This section defines the paths to the primary input data files.
 
 Parameters controlling the gRNA filtering process in `1_filtereing_gRNA.py`.
 * **`perform_targeting_filtering`**
-(bool) Whether this pipeline filter targeting gRNAs or not.
+(Boolean) Whether this pipeline filter targeting gRNAs or not.
 * **`perform_nontargeting_filtering`**
-(bool) Whether this pipeline filter non-targeting gRNAs or not.
+(Boolean) Whether this pipeline filter non-targeting gRNAs or not.
 * **`threshold_gRNA_num`**
 (Integer) If the number of gRNAs per region is less than this threshold, all of the combinations are used to find outlier gRNAs. if the number of gRNAs is more than this threshold, combinations within `combi_count` gRNAs are used.
 * **`combi_count`**: (Integer) Used when calculating pairwise energy distances *within* a target region's gRNAs. If a target region has more than 6 associated gRNAs, this parameter defines the size of the subsets of gRNAs to compare (e.g., compare a subset of size `k` vs. another subset of size `combi_count - k`). If the region has 6 or fewer gRNAs, all possible pairs of disjoint non-empty subsets are compared. 
@@ -186,6 +185,8 @@ Parameters controlling the permutation testing in `2_e_distance_nontargeting.py`
 * **`non_target_pick`**: (Integer) The number of cells to randomly sample (from the pool of all cells associated with *filtered* non-targeting gRNAs) to create each background set specified by `num_of_bg`. Therefore, total number of the non-targeting cells used for background is `num_of_bg` * `non_target_pick`.
 
 * **`batch_num_basic`**: (Integer) The base batch number used for the energy distance permutation test calculations (target vs. non-targeting). Similar to the DISCO test, the actual batch size might be adjusted based on the number of cells in the target region to manage computational resources.
+
+* **`use_matched_bg`**: (boolean) whether to use matched gRNA background or not (background for permutation test has matched percentage of co-transfected gRNAs). Use this option if clonal effect is substantial.
 
 #### `aggregate`
 

@@ -35,7 +35,8 @@
         "permute_per_bg": 1000,
         "num_of_bg": 20,
         "non_target_pick": 2000,
-        "batch_num_basic": 200
+        "batch_num_basic": 500,
+        "use_matched_bg": true
     },
     "aggregate":{
         "downsampling_maximum":10000

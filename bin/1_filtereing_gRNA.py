@@ -352,7 +352,7 @@ if config["gRNA_filtering"]["perform_targeting_filtering"]:
             int: The calculated batch size (at least 1).
         """
         if total_cell_num > 20000:
-            batch_num = 1 # Smallest batch size for very large datasets
+            batch_num = 5 # Smallest batch size for very large datasets
         elif total_cell_num > 5000:
             batch_num = batch_num_basic // 4 # Reduced batch size for large datasets
         elif total_cell_num > 300:
@@ -360,7 +360,7 @@ if config["gRNA_filtering"]["perform_targeting_filtering"]:
         else:
             batch_num = batch_num_basic # Basic batch size for smaller datasets
         # Ensure batch size is at least 1
-        return max(1, batch_num)
+        return max(5, batch_num)
 
     def run_disco_test(X, total_cell_list, device, batch_num, total_permute_disco, target_name):
         """
@@ -381,13 +381,11 @@ if config["gRNA_filtering"]["perform_targeting_filtering"]:
         # Removed print statement for batch size here, logged before calling
         try:
             # Attempt calculation on the primary device (potentially GPU)
-            # print(f"    Attempting disco test on device: {device} for {target_name}", flush=True) # Optional verbose
             obs_fvalue, fvalue_list = energy_distance_calc.disco_test(X, total_cell_list, device, batch_num=batch_num)
             obs_fvalue = obs_fvalue.numpy(),
             fvalue_list = fvalue_list.numpy()
 
             disco_pvalue = np.sum(fvalue_list > obs_fvalue) / total_permute_disco
-            #print(f"    Disco test completed on {device} for {target_name}. p-value: {disco_pvalue:.4f}", flush=True)
             return disco_pvalue
         except Exception as e_gpu:
             error_str = str(e_gpu).lower()
