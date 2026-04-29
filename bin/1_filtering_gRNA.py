@@ -538,11 +538,30 @@ if config["gRNA_filtering"]["perform_targeting_filtering"]:
 
         #print(f"  Target: {target}, Num gRNAs: {len(gRNA_list_target)}, Total Cells: {total_cell_num}, Groups with Cells: {valid_groups}")
 
-        # --- 2. Determine Batch Size ---
+        # --- 2. Optional downsampling for Disco test ---
+        combi_cell_num_max = config["gRNA_filtering"]["combi_cell_num_max"]
+        if not (combi_cell_num_max == "all" or combi_cell_num_max == "All"):
+            downsampled_total_cell_list = list(total_cell_list)
+            downsampled_groups = []
+            for group_idx, group_cells in enumerate(total_cell_list):
+                if len(group_cells) > combi_cell_num_max:
+                    downsampled_total_cell_list[group_idx] = np.random.choice(
+                        group_cells, combi_cell_num_max, replace=False
+                    ).tolist()
+                    downsampled_groups.append((group_idx, len(group_cells), combi_cell_num_max))
+
+            if downsampled_groups:
+                total_cell_list = downsampled_total_cell_list
+                total_cell_num = sum(len(cells) for cells in total_cell_list)
+                print(
+                    f"  Target '{target}' had {len(downsampled_groups)} sgRNA group(s) downsampled "
+                    f"to combi_cell_num_max={combi_cell_num_max} per group. Total cells for disco test: {total_cell_num}."
+                )
+        # --- 3. Determine Batch Size ---
         batch_num = determine_batch_size(total_cell_num, config["gRNA_filtering"]["batch_num_basic"])
         #print(f"  Determined batch size: {batch_num}")
 
-        # --- 3. Run Disco Test ---
+        # --- 4. Run Disco Test ---
         if valid_groups < 2:
             print(f"  Skipping disco test for '{target}': Fewer than 2 sgRNAs have associated cells.")
             disco_pvalue = np.nan
