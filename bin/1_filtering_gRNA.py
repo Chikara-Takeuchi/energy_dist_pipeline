@@ -646,7 +646,25 @@ cell_id_nontarget_list = [gRNA_dict[key] for key in non_target_gRNA_list]
 print("Num of non-targeting gRNAs:",len(non_target_gRNA_list))
 
 if config["gRNA_filtering"]["perform_nontargeting_filtering"]:
-    res = energy_distance_calc.pairwise_torch(pca_df,cell_id_nontarget_list,device,vardose=True)
+    combi_cell_num_max = config["gRNA_filtering"]["combi_cell_num_max"]
+    if not (combi_cell_num_max == "all" or combi_cell_num_max == "All"):
+        downsampled_nt_cells = []
+        downsampled_nt_count = 0
+        for cell_names in cell_id_nontarget_list:
+            if len(cell_names) > combi_cell_num_max:
+                downsampled_nt_cells.append(np.random.choice(cell_names, combi_cell_num_max, replace=False).tolist())
+                downsampled_nt_count += 1
+            else:
+                downsampled_nt_cells.append(cell_names)
+        cell_id_nontarget_list = downsampled_nt_cells
+        if downsampled_nt_count > 0:
+            print(f"Downsampled {downsampled_nt_count} non-targeting sgRNA group(s) to {combi_cell_num_max} cells before pairwise_torch.")
+
+    try:
+        res = energy_distance_calc.pairwise_torch(pca_df,cell_id_nontarget_list,device,vardose=True)
+    except torch.cuda.OutOfMemoryError:
+        print("[warning] CUDA OOM during non-targeting pairwise_torch; retrying on CPU.")
+        res = energy_distance_calc.pairwise_torch(pca_df,cell_id_nontarget_list,"cpu",vardose=True)
 
     # make Dataframe from results
     pairwise_list = np.zeros((len(non_target_gRNA_list),
