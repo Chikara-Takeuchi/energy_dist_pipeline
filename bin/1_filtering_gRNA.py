@@ -538,11 +538,48 @@ if config["gRNA_filtering"]["perform_targeting_filtering"]:
 
         #print(f"  Target: {target}, Num gRNAs: {len(gRNA_list_target)}, Total Cells: {total_cell_num}, Groups with Cells: {valid_groups}")
 
-        # --- 2. Determine Batch Size ---
+        # --- 2. Optional downsampling for Disco test ---
+        combi_cell_num_max = config["gRNA_filtering"]["combi_cell_num_max"]
+        if not (combi_cell_num_max == "all" or combi_cell_num_max == "All") and total_cell_num > combi_cell_num_max:
+            non_empty_group_indices = [idx for idx, cells in enumerate(total_cell_list) if len(cells) > 0]
+            if non_empty_group_indices:
+                # Allocate samples to each group proportionally while keeping at least one cell per non-empty group.
+                weights = np.array([len(total_cell_list[idx]) for idx in non_empty_group_indices], dtype=float)
+                alloc = np.floor(weights / weights.sum() * combi_cell_num_max).astype(int)
+                alloc = np.maximum(alloc, 1)
+
+                # If we exceed max due to minimum-one constraints, trim from largest groups first.
+                while alloc.sum() > combi_cell_num_max:
+                    max_idx = np.argmax(alloc)
+                    if alloc[max_idx] > 1:
+                        alloc[max_idx] -= 1
+                    else:
+                        break
+
+                # If we are under the target due to rounding, distribute remaining slots by largest remainders.
+                remaining = combi_cell_num_max - alloc.sum()
+                if remaining > 0:
+                    exact_alloc = weights / weights.sum() * combi_cell_num_max
+                    remainders = exact_alloc - np.floor(exact_alloc)
+                    for max_rem_idx in np.argsort(-remainders)[:remaining]:
+                        alloc[max_rem_idx] += 1
+
+                downsampled_total_cell_list = list(total_cell_list)
+                for j, group_idx in enumerate(non_empty_group_indices):
+                    group_cells = np.array(total_cell_list[group_idx])
+                    keep_n = min(len(group_cells), int(alloc[j]))
+                    if len(group_cells) > keep_n:
+                        downsampled_total_cell_list[group_idx] = np.random.choice(group_cells, keep_n, replace=False).tolist()
+
+                total_cell_list = downsampled_total_cell_list
+                total_cell_num = sum(len(cells) for cells in total_cell_list)
+                print(f"  Target '{target}' has {sum(weights.astype(int))} cells; downsampled to {total_cell_num} for disco test (combi_cell_num_max={combi_cell_num_max}).")
+
+        # --- 3. Determine Batch Size ---
         batch_num = determine_batch_size(total_cell_num, config["gRNA_filtering"]["batch_num_basic"])
         #print(f"  Determined batch size: {batch_num}")
 
-        # --- 3. Run Disco Test ---
+        # --- 4. Run Disco Test ---
         if valid_groups < 2:
             print(f"  Skipping disco test for '{target}': Fewer than 2 sgRNAs have associated cells.")
             disco_pvalue = np.nan
